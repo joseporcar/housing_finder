@@ -1,3 +1,5 @@
+
 fn main() {
-    println!("Hello, world!");
+    dotenvy::dotenv().expect("There is an issue with the .env file");
+    
 }
