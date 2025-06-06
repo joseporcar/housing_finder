@@ -4,45 +4,32 @@ use lettre::transport::smtp::authentication::Credentials;
 use lettre::{Message, SmtpTransport, Transport};
 
 #[derive(Debug)] 
-struct Data {
+pub struct Mailer {
     sender: String,
-    password: String,
     recipient: String,
+    relay: SmtpTransport,
 }
-impl Default for Data {
-    fn default() -> Self {
+
+impl Mailer {
+    pub fn new() -> Self {
         Self { sender: env::var("SENDER_EMAIL").unwrap(), 
-        password: env::var("PASSWORD").unwrap(), 
-        recipient: env::var("RECIPIENT_EMAIL").unwrap() }
-    }
-}
-impl Data {
-    fn sender(&self) -> &str {
-        &self.sender
+            recipient: env::var("RECIPIENT_EMAIL").unwrap() ,
+            relay: SmtpTransport::relay("smtp.gmail.com").unwrap().credentials(Credentials::new(env::var("SENDER_EMAIL").unwrap(), env::var("PASSWORD").unwrap())).build()
+        }
     }
 
-    fn credentials(&self) -> Credentials {
-        Credentials::new(self.sender.clone(), self.password.clone())
+    fn message(&self, content: &str) -> Result<Message, AddressError> {
+        Ok(Message::builder()
+                    .from(self.sender.parse()?)
+                    .to(self.recipient.parse()?)
+                    .subject("New housing found!")
+                    .body(content.to_owned()).unwrap())
     }
 
-    fn recipient(&self) -> &str {
-        &self.recipient
+    pub fn send_email(&self, content: &str) {
+        match self.relay.send(&self.message(content).expect("invalid email adress")) {
+            Ok(_) => println!("email sent"),
+            Err(e) => println!("error sending email: {:?}", e)
+        }
     }
-}
-
-pub fn send_email(content: &str) -> Result<(), AddressError> {
-    let data = Data::default();
-    let message = Message::builder()
-        .from(data.sender().parse()?)
-        .to(data.recipient().parse()?)
-        .subject("New housing found!")
-        .body(content.to_owned()).unwrap();
-
-    let mailer = SmtpTransport::relay("smtp.gmail.com").unwrap().credentials(data.credentials()).build();
-
-    match mailer.send(&message) {
-        Ok(_) => println!("email sent"),
-        Err(e) => println!("error sending email: {:?}", e)
-    }
-    Ok(())
 }
