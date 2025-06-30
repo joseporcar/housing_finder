@@ -4,8 +4,10 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+chrono = "0.4.41"
 dotenvy = "0.15.7"
 fantoccini = "0.21.5"
 lettre = { version="0.11.17", features = ["smtp-transport", "builder"] }
 reqwest = { version = "0.12.20", features = ["blocking"] }
+rusqlite = { version = "0.36.0", features = ["bundled", "chrono"] }
 scraper = "0.23.1"
