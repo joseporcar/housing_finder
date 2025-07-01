@@ -19,7 +19,7 @@ impl Database {
                 end_date TEXT,
                 languages TEXT,
                 min_age INTEGER,
-                max_age,
+                max_age INTEGER,
                 gender TEXT,
                 furniture TEXT,
                 description TEXT)",
