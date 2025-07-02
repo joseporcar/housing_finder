@@ -7,3 +7,7 @@ This is a utility that will email you when new housing is found in the platform 
 
 ## TODO: 
 - Explore using KDE connect to send push notification to phone. 
+- Extract the data from each individual listing
+- dont forget to test to not duplicate lol
+- Send email from the data
+- Make the program cycle

@@ -1,7 +1,7 @@
 
 use rusqlite::{Connection, named_params};
 
-use crate::listing::Listing;
+use crate::{fetch_data, listing::Listing};
 
 pub struct Database {
     connection: Connection,
@@ -54,5 +54,10 @@ impl Database {
 
     pub fn get_listing(&self, id: u32) -> Result<Listing, rusqlite::Error> {
         self.connection.query_row_and_then("SELECT * FROM listings WHERE id=?1", [id], |row| Listing::try_from(row))
+    }
+
+    pub fn contains(&self, id: u32) -> bool {
+        let mut stmt = self.connection.prepare("SELECT * FROM listings WHERE id=?1").unwrap();
+        stmt.exists([id]).unwrap()
     }
 }
