@@ -17,8 +17,9 @@ pub struct Listing {
     description: String,
 }
 impl Listing {
-    pub fn new() -> Listing {
-        todo!()
+    pub fn new(id: u32, rent: u32, size: u32, start_date: NaiveDate, end_date: Option<NaiveDate>, languages: Vec<String>, min_age: u8, max_age: u8, gender: String, furniture: String, description: String) -> Listing {
+        Listing { id, rent, size, start_date, end_date, languages, min_age, max_age, gender, furniture, description }
+        
     }
     pub fn id(&self) -> u32 {
         self.id
