@@ -1,5 +1,6 @@
 use std::{fs, io::Read, ops::Not};
 
+use chrono::NaiveDate;
 use reqwest::{blocking::Response};
 use scraper::{Html, Selector};
 
@@ -41,8 +42,14 @@ pub fn extract_room_data(link: &str) -> Result<Listing, reqwest::Error> {
     // let room = fetch_html(link)?; TODO uncomment
     let room = Html::parse_document(&fs::read_to_string("./sample.txt").unwrap());
     let rent = extract_rent(&room);
+    let size = extract_size(&room); 
+    let start_date = extract_start_date(&room);
+    let end_date = extract_end_date(&room);
+    // more testing with better listing needed
+    let languages = extract_languages(&room);
+    
     // let id = id_from_link(link);
-    println!("{rent}");
+    println!("{:?}", languages);
 
     // Ok(Listing::new(id, rent, size, start_date, end_date, languages, min_age, max_age, gender, furniture, description))
     Ok(Listing::default())
@@ -51,46 +58,54 @@ pub fn extract_room_data(link: &str) -> Result<Listing, reqwest::Error> {
 fn extract_rent(room: &Html) -> u32 {
     let selector = Selector::parse(ROOM_SELECTOR).expect("Something wrong with selector");
     let raw = room.select(&selector).next().expect("Something wrong with selector").inner_html();
-    raw[1..].parse().unwrap()
+    raw[3..].parse().unwrap()
 }
 fn extract_size(room: &Html) -> u32 {
-    let selector = Selector::parse(ROOM_SELECTOR).expect("Something wrong with selector");
+    let selector = Selector::parse(SIZE_SELECTOR).expect("Something wrong with selector");
     let raw = room.select(&selector).next().expect("Something wrong with selector").inner_html();
-    raw[1..].parse().unwrap()
+    raw.split_ascii_whitespace().next().unwrap().parse().unwrap()
 }
-fn extract_start_date(room: &Html) -> u32 {
-    let selector = Selector::parse(ROOM_SELECTOR).expect("Something wrong with selector");
+fn extract_start_date(room: &Html) -> NaiveDate {
+    let selector = Selector::parse(START_DATE_SELECTOR).expect("Something wrong with selector");
     let raw = room.select(&selector).next().expect("Something wrong with selector").inner_html();
-    raw[1..].parse().unwrap()
+    let mut split = raw.split_ascii_whitespace();
+    split.nth(1);
+    NaiveDate::parse_from_str(dbg!(&split.collect::<String>()), "%d%b%Y").unwrap()
+    
 }
-fn extract_end_date(room: &Html) -> u32 {
+// TODO havent done this one cuz honestly kinda useless and wanna deploy
+fn extract_end_date(room: &Html) -> Option<NaiveDate> {
     let selector = Selector::parse(ROOM_SELECTOR).expect("Something wrong with selector");
     let raw = room.select(&selector).next().expect("Something wrong with selector").inner_html();
-    raw[1..].parse().unwrap()
+    None
 }
-fn extract_languages(room: &Html) -> u32 {
-    let selector = Selector::parse(ROOM_SELECTOR).expect("Something wrong with selector");
+fn extract_languages(room: &Html) -> Vec<String> {
+    let selector = Selector::parse(LANGUAGES_SELECTOR).expect("Something wrong with selector");
     let raw = room.select(&selector).next().expect("Something wrong with selector").inner_html();
-    raw[1..].parse().unwrap()
+    if raw == "Everyone welcome" {
+        vec!["all".to_owned()]
+    } else {
+        raw.split(" , ").map(|s| s.to_owned()).collect()
+    }
 }
 fn extract_ages(room: &Html) -> (u8, u8) {
-    let selector = Selector::parse(ROOM_SELECTOR).expect("Something wrong with selector");
+    let selector = Selector::parse(AGES_SELECTOR).expect("Something wrong with selector");
     let raw = room.select(&selector).next().expect("Something wrong with selector").inner_html();
     //raw[1..].parse().unwrap();
     todo!()
 }
 fn extract_gender(room: &Html) -> u32 {
-    let selector = Selector::parse(ROOM_SELECTOR).expect("Something wrong with selector");
+    let selector = Selector::parse(GENDER_SELECTOR).expect("Something wrong with selector");
     let raw = room.select(&selector).next().expect("Something wrong with selector").inner_html();
     raw[1..].parse().unwrap()
 }
 fn extract_furniture(room: &Html) -> u32 {
-    let selector = Selector::parse(ROOM_SELECTOR).expect("Something wrong with selector");
+    let selector = Selector::parse(FURNITURE_SELECTOR).expect("Something wrong with selector");
     let raw = room.select(&selector).next().expect("Something wrong with selector").inner_html();
     raw[1..].parse().unwrap()
 }
 fn extract_description(room: &Html) -> u32 {
-    let selector = Selector::parse(ROOM_SELECTOR).expect("Something wrong with selector");
+    let selector = Selector::parse(DESCRIPTION_SELECTOR).expect("Something wrong with selector");
     let raw = room.select(&selector).next().expect("Something wrong with selector").inner_html();
     raw[1..].parse().unwrap()
 }
