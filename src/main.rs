@@ -1,8 +1,10 @@
+use std::fs;
+
 use lettre::transport::smtp::commands::Data;
 use scraper::{Html, Selector};
 
 mod send_email;
-use crate::send_email::Mailer;
+use crate::{fetch_data::{extract_room_data}, send_email::Mailer};
 mod database;
 mod listing;
 
@@ -25,4 +27,6 @@ fn main() {
 
     //let aa = fetch_data::ids_from_links(&fetch_data::links_to_rooms("https://kamernet.nl/en/for-rent/properties-eindhoven?maxRent=8&radius=7&pageNo=1").unwrap());
     //println!("{:?}", aa)
+
+    extract_room_data("a");
 }
