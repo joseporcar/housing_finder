@@ -1,4 +1,6 @@
-This is a utility that will email you when new housing is found in the platform Kamernet, and maybe also automate giving a message about the opening. 
+## WARNING DOESNT WORK YET
+
+This is a utility that will email you when new housing is found in the platform Kamernet.
 
 ## Usage instructions: 
 1. Paste the file `.env.template` into a file called `.env` (or js rename it) and change the placeholder values for your own!!
