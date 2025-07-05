@@ -1,17 +1,53 @@
+use crate::{database::Database, listing::Listing, send_email::Mailer};
+
+pub mod database;
 mod fetch_data;
-mod database;
 mod listing;
+pub mod send_email;
 
-/// Meant take in all the data from site and store in database. 
-fn update_database() {
-    todo!()
+fn send_email(mailer: &Mailer, listing: &Listing) {
+    let content = format!(
+        "Hey! There is a new listing with a cost of: €{}
+    It measures {}m2
+    It is availible from {} to {}
+    It is {}
+    Here are words from the lanlord:
+    {}
+    ",
+        listing.rent(),
+        listing.size(),
+        listing.start_date(),
+        listing
+            .end_date()
+            .map_or("indefinite".to_owned(), |date| date.to_string()),
+        listing.furniture(),
+        listing.description()
+    );
+    mailer.send_email(&content);
 }
 
-fn send_email() {
-    todo!()
-}
+/// Main function.
+pub fn refresh_data(link: &str, database: Database, mailer: Mailer) {
+    let Ok(links) = fetch_data::links_to_rooms(link, &database) else {
+        println!(
+            "Couldn't fetch the search link at time {}",
+            chrono::Local::now()
+        );
+        return;
+    };
+    for link in links {
+        let Ok(listing) = fetch_data::extract_room_data(&link) else {
+            println!(
+                "Couldn't extract data from {} at time {}",
+                link,
+                chrono::Local::now()
+            );
+            continue;
+        };
+        if listing.is_valid() {
+            send_email(&mailer, &listing);
+        }
 
-/// Main function. 
-pub fn refresh_site() {
-    todo!()
+        database.add_listing(listing);
+    }
 }

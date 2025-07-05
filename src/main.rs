@@ -1,32 +1,21 @@
-use std::fs;
 
-use lettre::transport::smtp::commands::Data;
-use scraper::{Html, Selector};
+use dotenvy::var;
+use housing_finder::{database, refresh_data, send_email::Mailer};
 
-mod send_email;
-use crate::{fetch_data::{extract_room_data}, send_email::Mailer};
-mod database;
-mod listing;
-
-mod fetch_data;
 
 fn main() {
+    // the first test must print all of the database, and it must send the emails.
+
     dotenvy::dotenv().expect("There is an issue with the .env file");
-    // let mailer = Mailer::new();
 
-    // mailer.send_email("there is housing in your area");
+    let mailer = Mailer::new();
 
-    let some_listing = listing::Listing::default();
     let manager = database::Database::open_database();
+
+    refresh_data(
+        &var("SEARCH_LINK").expect("error getting search link from dotenv"),
+        manager,
+        mailer,
+    );
     
-    // manager.add_listing(some_listing);
-    // let id = 403;
-    // if let Err(rusqlite::Error::QueryReturnedNoRows) = dbg!(manager.get_listing(id)) {
-    //     eprintln!("listing by id {id} not found")
-    // }
-
-    //let aa = fetch_data::ids_from_links(&fetch_data::links_to_rooms("https://kamernet.nl/en/for-rent/properties-eindhoven?maxRent=8&radius=7&pageNo=1").unwrap());
-    //println!("{:?}", aa)
-
-    extract_room_data("a");
 }
