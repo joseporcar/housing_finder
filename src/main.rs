@@ -1,6 +1,9 @@
 
+use std::{thread, time};
+
 use dotenvy::var;
 use housing_finder::{database, refresh_data, send_email::Mailer};
+use rand::Rng;
 
 
 fn main() {
@@ -12,10 +15,15 @@ fn main() {
 
     let manager = database::Database::open_database();
 
-    refresh_data(
+    let mut seed = rand::rng();
+
+    loop {
+        refresh_data(
         &var("SEARCH_LINK").expect("error getting search link from dotenv"),
-        manager,
-        mailer,
-    );
+        &manager,
+        &mailer,);
+        thread::sleep(time::Duration::from_secs(300 + seed.random_range(0..600)));
+    }
     
+
 }

@@ -28,7 +28,8 @@ fn send_email(mailer: &Mailer, listing: &Listing, link: &str) {
 }
 
 /// Main function.
-pub fn refresh_data(link: &str, database: Database, mailer: Mailer) {
+pub fn refresh_data(link: &str, database: &Database, mailer: &Mailer) {
+    println!("Fetching data at {}", chrono::Local::now());
     let Ok(links) = fetch_data::links_to_rooms(link, &database) else {
         println!(
             "Couldn't fetch the search link at time {}",

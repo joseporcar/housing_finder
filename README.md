@@ -1,5 +1,3 @@
-## WARNING DOESNT WORK YET
-
 This is a utility that will email you when new housing is found in the platform Kamernet.
 
 ## Usage instructions: 
