@@ -1,6 +1,6 @@
 use rusqlite::{Connection, named_params};
 
-use crate::{fetch_data, listing::Listing};
+use crate::{listing::Listing};
 
 pub struct Database {
     connection: Connection,

@@ -86,12 +86,12 @@ impl Listing {
             .expect("Age in dotenv is not a number");
         let gender = var("GENDER").expect("Error parsing dotenv for gender");
 
-        (self.languages[0] == "all".to_owned()
+        (self.languages[0] == *"all"
             || languages
                 .split(",")
                 .any(|lang| self.languages.contains(&lang.to_lowercase().to_owned())))
             && (age == 0 || (age >= self.min_age && age <= self.max_age))
-            && (self.gender == "any".to_owned() || gender.to_lowercase() == self.gender)
+            && (self.gender == *"any" || gender.to_lowercase() == self.gender)
     }
 }
 

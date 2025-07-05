@@ -1,8 +1,6 @@
-use std::{fs, io::Read, ops::Not};
+use std::{ops::Not};
 
 use chrono::NaiveDate;
-use reqwest::blocking::Response;
-use rusqlite::fallible_iterator::Unwrap;
 use scraper::{Html, Selector};
 
 use crate::{database, listing::Listing};

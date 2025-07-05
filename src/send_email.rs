@@ -44,3 +44,9 @@ impl Mailer {
         }
     }
 }
+
+impl Default for Mailer {
+    fn default() -> Self {
+        Self::new()
+    }
+}
