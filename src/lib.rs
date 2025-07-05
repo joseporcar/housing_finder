@@ -5,15 +5,16 @@ mod fetch_data;
 mod listing;
 pub mod send_email;
 
-fn send_email(mailer: &Mailer, listing: &Listing) {
+fn send_email(mailer: &Mailer, listing: &Listing, link: &str) {
     let content = format!(
-        "Hey! There is a new listing with a cost of: €{}\n
+    "{}
+    Hey! There is a new listing with a cost of: €{}\n
     It measures {}m2\n
     It is availible from {} to {}\n
     It is {}\n
     Here are words from the lanlord:
      > {}
-    ",
+    ",  link,
         listing.rent(),
         listing.size(),
         listing.start_date(),
@@ -45,7 +46,7 @@ pub fn refresh_data(link: &str, database: Database, mailer: Mailer) {
             continue;
         };
         if listing.is_valid() {
-            send_email(&mailer, &listing);
+            send_email(&mailer, &listing, &link);
         }
 
         database.add_listing(listing);
