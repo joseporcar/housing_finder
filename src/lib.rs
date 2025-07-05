@@ -7,12 +7,12 @@ pub mod send_email;
 
 fn send_email(mailer: &Mailer, listing: &Listing) {
     let content = format!(
-        "Hey! There is a new listing with a cost of: €{}
-    It measures {}m2
-    It is availible from {} to {}
-    It is {}
+        "Hey! There is a new listing with a cost of: €{}\n
+    It measures {}m2\n
+    It is availible from {} to {}\n
+    It is {}\n
     Here are words from the lanlord:
-    {}
+     > {}
     ",
         listing.rent(),
         listing.size(),
